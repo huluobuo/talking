@@ -1,0 +1,46 @@
+<!-- public/admin.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理面板</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="admin-container">
+        <h1>管理面板</h1>
+        <div id="online-count">当前在线人数: 0</div>
+        <div id="connected-ips">已连接的 IP 地址:</div>
+        <div id="log-messages">客户端信息:</div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin.js"></script>
+    <div id="log-container"></div>
+    <script>
+        const socket = io();
+        const logContainer = document.getElementById('log-container');
+        const maxLogs = 50; // Maximum number of logs to display
+        const logs = []; // Array to store log messages
+
+        // Listen for log messages
+        socket.on('log message', function(log) {
+            // Add the new log to the array
+            logs.push(log);
+
+            // If the number of logs exceeds the maximum, remove the oldest
+            if (logs.length > maxLogs) {
+                logs.shift(); // Remove the oldest log
+            }
+
+            // Clear the log container and re-render the logs
+            logContainer.innerHTML = '';
+            logs.forEach(logEntry => {
+                const logDiv = document.createElement('div');
+                logDiv.textContent = logEntry;
+                logContainer.appendChild(logDiv);
+            });
+        });
+    </script>
+</body>
+</html>
